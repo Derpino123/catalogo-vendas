@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import br.com.davsantos.services.validations.ClienteInsert;
 
-
+@ClienteInsert
 public class NewClienteDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String nome;
