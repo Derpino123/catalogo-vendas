@@ -50,6 +50,16 @@ public class Pedido {
 		this.cliente = cliente;
 		this.enderecoDeEntrega = enderecoDeEntrega;
 	}
+	
+	public double getValorTotal() {
+		double soma = 0.0;
+		
+		for (ItemPedido item : itens) {
+			soma = soma + item.getSubtotal();
+		}
+		
+		return soma;
+	}
 
 	public Integer getId() {
 		return id;
