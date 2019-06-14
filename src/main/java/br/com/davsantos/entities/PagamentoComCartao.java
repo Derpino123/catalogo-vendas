@@ -2,11 +2,16 @@ package br.com.davsantos.entities;
 
 import javax.persistence.Entity;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import br.com.davsantos.entities.enums.StatusPagamento;
 
 @Entity
+@JsonTypeName("Cartao")
 public class PagamentoComCartao extends Pagamento {
-
+	private static final long serialVersionUID = 1L;
+	
+	
 	private Integer numeroParcela;
 
 	public PagamentoComCartao() {
