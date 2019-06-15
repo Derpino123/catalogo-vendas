@@ -1,5 +1,6 @@
 package br.com.davsantos.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +21,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import br.com.davsantos.entities.enums.TipoCliente;
 
 @Entity
-public class Cliente {
+public class Cliente implements Serializable {
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -88,7 +90,7 @@ public class Cliente {
 	}
 
 	public TipoCliente getTipoCliente() {
-		return TipoCliente.toEnum(this.tipoCliente);
+		return TipoCliente.toEnum(tipoCliente);
 	}
 
 	public void setTipoCliente(TipoCliente tipoCliente) {
@@ -117,10 +119,6 @@ public class Cliente {
 
 	public void setPedidos(List<Pedido> pedidos) {
 		this.pedidos = pedidos;
-	}
-
-	public void setTipoCliente(Integer tipoCliente) {
-		this.tipoCliente = tipoCliente;
 	}
 
 	@Override

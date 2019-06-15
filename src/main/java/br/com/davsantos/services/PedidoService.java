@@ -63,6 +63,7 @@ public class PedidoService {
 		for (ItemPedido item : pedido.getItens()) {
 			item.setDesconto(0.0);
 			item.setPreco(produtoService.findById(item.getProduto().getId()).getPreco());
+			item.setPedido(pedido);
 		}
 		
 		itemPedidoRepository.saveAll(pedido.getItens());
