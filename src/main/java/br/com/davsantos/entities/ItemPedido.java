@@ -1,6 +1,8 @@
 package br.com.davsantos.entities;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -109,5 +111,23 @@ public class ItemPedido implements Serializable {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		NumberFormat formatNumber = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+		StringBuilder builder = new StringBuilder();
+		builder.append(getProduto().getNome());
+		builder.append(", QTD : ");
+		builder.append(getQuantidade());
+		builder.append(", Preço unitário : ");
+		builder.append(formatNumber.format(getPreco()));
+		builder.append(", SUBTOTAL : ");
+		builder.append(formatNumber.format(getSubtotal()));
+		builder.append("\n");
+		
+		return builder.toString();
+	}
+	
+	
 
 }
