@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import br.com.davsantos.services.DBService;
+import br.com.davsantos.services.EmailService;
+import br.com.davsantos.services.MockEmailService;
 
 @Configuration
 @Profile("hml")
@@ -22,5 +24,10 @@ public class HMLDBConfig {
 		dbService.instantiateHmlDataBase();
 		
 		return true;
+	}
+	
+	@Bean
+	public EmailService emailService() {
+		return new MockEmailService();
 	}
 }

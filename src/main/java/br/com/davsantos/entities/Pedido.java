@@ -151,9 +151,9 @@ public class Pedido implements Serializable{
 		builder.append(sdf.format(getInstante()));
 		builder.append(", Cliente : ");
 		builder.append(getCliente().getNome());
-		builder.append(", Situação do Pagamento :");
+		builder.append(", Situação do Pagamento : ");
 		builder.append(getPagamento().getStatusPagamento().getDescricao());
-		builder.append("\n Detalhes \n");
+		builder.append("\nDetalhes \n");
 		for (ItemPedido item : getItens()) {
 			builder.append(item.toString());
 		}
