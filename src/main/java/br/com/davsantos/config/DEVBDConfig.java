@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import br.com.davsantos.services.DBService;
+import br.com.davsantos.services.EmailService;
+import br.com.davsantos.services.SmtpEmailService;
 
 @Configuration
 @Profile("dev")
@@ -30,5 +32,10 @@ public class DEVBDConfig {
 		dbService.instantiateHmlDataBase();
 		
 		return true;
+	}
+	
+	@Bean
+	public EmailService emailService() {
+		return new SmtpEmailService();
 	}
 }
