@@ -23,7 +23,7 @@ public class PRDDBConfig {
 	@Bean
 	public boolean instantiateDataBase() throws ParseException {
 		
-		if (!"none".equals(strategy)) {
+		if (!"create".equals(strategy)) {
 			return false;
 		}
 		
