@@ -6,6 +6,7 @@ import org.springframework.mail.SimpleMailMessage;
 
 import br.com.davsantos.entities.Pedido;
 
+
 public interface EmailService {
 
 	void sendOrderConfirmationEmail(Pedido pedido);
