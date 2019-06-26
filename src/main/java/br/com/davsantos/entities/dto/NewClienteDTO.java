@@ -2,20 +2,42 @@ package br.com.davsantos.entities.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.Length;
+
 import br.com.davsantos.services.validations.ClienteInsert;
 
 @ClienteInsert
 public class NewClienteDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
+	@NotEmpty(message = "Preenchimento obrigatótio")
+	@Length(min = 5, max = 120, message = "O tamanho deve ser entre 5 e 120 caracteres")
 	private String nome;
+	
+	@NotEmpty(message = "Preenchimento obrigatótio")
+	@Email(message = "Email inválido!")
 	private String email;
+	
+	@NotEmpty(message = "Preenchimento obrigatório")
 	private String idLegal;
 	private Integer tipoCliente;
+	
+	@NotEmpty(message = "Preenchimento obrigatório")
+	private String senha;
 
+	
+	@NotEmpty(message = "Preenchimento obrigatório")
 	private String logradouro;
+	
+	@NotEmpty(message = "Preenchimento obrigatório")
 	private String numero;
 	private String complemento;
 	private String bairro;
+	
+	@NotEmpty(message = "Preenchimento obrigatório")
 	private String cep;
 
 	private String telefone;
@@ -113,6 +135,16 @@ public class NewClienteDTO implements Serializable {
 	public void setCidadeId(Integer cidadeId) {
 		this.cidadeId = cidadeId;
 	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+	
+	
 	
 	
 }
