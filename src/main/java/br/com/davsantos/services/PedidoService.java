@@ -6,8 +6,12 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import br.com.davsantos.entities.Cliente;
 import br.com.davsantos.entities.ItemPedido;
 import br.com.davsantos.entities.PagamentoComBoleto;
 import br.com.davsantos.entities.Pedido;
@@ -15,6 +19,8 @@ import br.com.davsantos.entities.enums.StatusPagamento;
 import br.com.davsantos.repositories.ItemPedidoRepository;
 import br.com.davsantos.repositories.PagamentoRepository;
 import br.com.davsantos.repositories.PedidoRepository;
+import br.com.davsantos.security.User;
+import br.com.davsantos.services.exceptions.AuthorizationException;
 import br.com.davsantos.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -80,5 +86,16 @@ public class PedidoService {
 		return pedido;
 	}
 	
+	public Page<Pedido> findByPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		User user = UserS.authenticate();
+		if(user == null) {
+			throw new AuthorizationException("Acesso Negado!");
+		}
+		
+		PageRequest request = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		Cliente cliente = clienteService.findById(user.getId());
+		
+		return pedidoRepository.findByCliente(cliente, request);	
+	}
 	
 }
