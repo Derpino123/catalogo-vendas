@@ -17,10 +17,13 @@ import br.com.davsantos.entities.Cliente;
 import br.com.davsantos.entities.Endereco;
 import br.com.davsantos.entities.dto.ClienteDTO;
 import br.com.davsantos.entities.dto.NewClienteDTO;
+import br.com.davsantos.entities.enums.Perfil;
 import br.com.davsantos.entities.enums.TipoCliente;
 import br.com.davsantos.repositories.CidadeRepository;
 import br.com.davsantos.repositories.ClienteRepository;
 import br.com.davsantos.repositories.EnderecoRepository;
+import br.com.davsantos.security.User;
+import br.com.davsantos.services.exceptions.AuthorizationException;
 import br.com.davsantos.services.exceptions.DataIntegrityViolationException;
 import br.com.davsantos.services.exceptions.ObjectNotFoundException;
 
@@ -40,6 +43,11 @@ public class ClienteService {
 	private BCryptPasswordEncoder bCrypt;
 
 	public Cliente findById(Integer id) {
+		User user = UserS.authenticate();
+		if (user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso Negado!");
+		}
+		
 		Optional<Cliente> cliente = clienteRepository.findById(id);
 		return cliente.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado!  ID : " + id + ", TIPO : " + Cliente.class.getName()));
