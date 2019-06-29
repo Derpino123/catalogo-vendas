@@ -13,6 +13,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import br.com.davsantos.entities.Cliente;
 import br.com.davsantos.entities.Pedido;
 
 public abstract class AbstractEmailService implements EmailService {
@@ -69,5 +70,22 @@ public abstract class AbstractEmailService implements EmailService {
 		mimeMessageHelper.setText(htmlFromTemplatePedido(pedido), true);
 		
 		return mimeMessage;
+	}
+	
+	@Override
+	public void sendNewPasswordEmail(Cliente cliente, String newPass) {
+		SimpleMailMessage message = prepareNewPasswordEmail(cliente, newPass);
+		sendEmail(message);
+	}
+
+	protected SimpleMailMessage prepareNewPasswordEmail(Cliente cliente, String newPass) {
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setTo(cliente.getEmail());
+		message.setFrom(sender);
+		message.setSubject("Solicitação de nova senha");
+		message.setSentDate(new Date(System.currentTimeMillis()));
+		message.setText("NOVA SENHA : " + newPass);
+
+		return message;
 	}
 }

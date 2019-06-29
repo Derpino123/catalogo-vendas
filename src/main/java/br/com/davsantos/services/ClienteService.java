@@ -19,7 +19,6 @@ import br.com.davsantos.entities.dto.ClienteDTO;
 import br.com.davsantos.entities.dto.NewClienteDTO;
 import br.com.davsantos.entities.enums.Perfil;
 import br.com.davsantos.entities.enums.TipoCliente;
-import br.com.davsantos.repositories.CidadeRepository;
 import br.com.davsantos.repositories.ClienteRepository;
 import br.com.davsantos.repositories.EnderecoRepository;
 import br.com.davsantos.security.User;
@@ -34,9 +33,6 @@ public class ClienteService {
 	private ClienteRepository clienteRepository;
 
 	@Autowired
-	private CidadeRepository cidadeRepository;
-	
-	@Autowired
 	private EnderecoRepository enderecoRepository;
 
 	@Autowired
@@ -47,7 +43,7 @@ public class ClienteService {
 		if (user == null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
 			throw new AuthorizationException("Acesso Negado!");
 		}
-		
+
 		Optional<Cliente> cliente = clienteRepository.findById(id);
 		return cliente.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado!  ID : " + id + ", TIPO : " + Cliente.class.getName()));
@@ -81,7 +77,7 @@ public class ClienteService {
 	}
 
 	public Page<Cliente> findByPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
-		PageRequest request = new PageRequest(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		PageRequest request = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return clienteRepository.findAll(request);
 	}
 
@@ -91,13 +87,14 @@ public class ClienteService {
 
 	public Cliente fromDTO(NewClienteDTO newClienteDTO) {
 		Cliente cliente = new Cliente(null, newClienteDTO.getNome(), newClienteDTO.getEmail(),
-				newClienteDTO.getIdLegal(), TipoCliente.toEnum(newClienteDTO.getTipoCliente()), bCrypt.encode(newClienteDTO.getSenha()));
+				newClienteDTO.getIdLegal(), TipoCliente.toEnum(newClienteDTO.getTipoCliente()),
+				bCrypt.encode(newClienteDTO.getSenha()));
 		Cidade cidade = new Cidade(newClienteDTO.getCidadeId(), null, null);
 		Endereco endereco = new Endereco(null, newClienteDTO.getLogradouro(), newClienteDTO.getNumero(),
 				newClienteDTO.getComplemento(), newClienteDTO.getBairro(), newClienteDTO.getCep(), cliente, cidade);
 		cliente.getEnderecos().add(endereco);
 		cliente.getTelefones().add(newClienteDTO.getTelefone());
-		
+
 		return cliente;
 	}
 
