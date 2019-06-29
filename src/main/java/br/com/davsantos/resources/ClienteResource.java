@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.davsantos.entities.Cliente;
@@ -36,10 +37,10 @@ public class ClienteResource {
 
 		return ResponseEntity.ok().body(cliente);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Void> insert(@Valid @RequestBody NewClienteDTO newClienteDTO) {
-		Cliente cliente = clienteService.fromDTO(newClienteDTO);	
+		Cliente cliente = clienteService.fromDTO(newClienteDTO);
 		cliente = clienteService.insert(cliente);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(cliente.getId())
@@ -76,15 +77,22 @@ public class ClienteResource {
 	}
 
 	@PreAuthorize("hasAnyRole('ADMIN')")
-	@RequestMapping(value = "/page", method=RequestMethod.GET)
-	public ResponseEntity<Page<ClienteDTO>> findPage(@RequestParam (value = "page", defaultValue = "0")Integer page,
-			@RequestParam (value = "orderBy", defaultValue = "nome") String orderBy,
-			@RequestParam (value = "direction", defaultValue = "ASC") String direction,
-			@RequestParam (value = "linesPerPage", defaultValue = "24") Integer linesPerPage) {
+	@RequestMapping(value = "/page", method = RequestMethod.GET)
+	public ResponseEntity<Page<ClienteDTO>> findPage(@RequestParam(value = "page", defaultValue = "0") Integer page,
+			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
+			@RequestParam(value = "direction", defaultValue = "ASC") String direction,
+			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage) {
 
 		Page<Cliente> clientes = clienteService.findByPage(page, linesPerPage, orderBy, direction);
 		Page<ClienteDTO> clientesDTO = clientes.map(cliente -> new ClienteDTO(cliente));
-		
+
 		return ResponseEntity.ok().body(clientesDTO);
+	}
+
+	@RequestMapping(value = "/picture", method = RequestMethod.POST)
+	public ResponseEntity<Void> uploadProfilePicture(@RequestParam(name = "file") MultipartFile file) {
+		URI uri = clienteService.uploadProfilePicture(file);
+		
+		return ResponseEntity.created(uri).build();
 	}
 }
