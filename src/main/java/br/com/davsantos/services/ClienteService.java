@@ -1,5 +1,6 @@
 package br.com.davsantos.services;
 
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -7,6 +8,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
@@ -39,9 +41,15 @@ public class ClienteService {
 
 	@Autowired
 	private BCryptPasswordEncoder bCrypt;
-	
+
 	@Autowired
 	private S3Service s3Service;
+
+	@Autowired
+	private ImageService imageService;
+
+	@Value("${img.prefix.client.profile}")
+	private String prefix;
 
 	public Cliente findById(Integer id) {
 		User user = UserS.authenticate();
@@ -107,19 +115,17 @@ public class ClienteService {
 		newCliente.setNome(cliente.getNome());
 		newCliente.setEmail(cliente.getEmail());
 	}
-	
+
 	public URI uploadProfilePicture(MultipartFile multipartFile) {
 		User user = UserS.authenticate();
 		if (user == null) {
 			throw new AuthorizationException("Acesso Negado!");
 		}
-		
-		URI uri = s3Service.uploadFile(multipartFile);
-		
-		Cliente cliente = clienteRepository.findByEmail(user.getUsername());
-		cliente.setImageUrl(uri.toString());
-		clienteRepository.save(cliente);
-		
-		return s3Service.uploadFile(multipartFile);
+
+		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+		String fileName = prefix + user.getId() + ".jpg";
+
+		return s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
+
 	}
 }
